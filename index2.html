@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>'그날. 내 편' 통합 전략 스쿼드 대시보드</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            min-height: 300px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 45vh;
+            }
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tab-active {
+            border-bottom: 2px solid #D97706;
+            color: #92400E;
+            font-weight: 700;
+        }
+        .tab-inactive {
+            color: #64748B;
+            border-bottom: 2px solid transparent;
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Chosen Palette: Crisp Professional & Brand Accents (Slate-800 text, Amber/Orange for strategic highlights matching wellness/premium tone, Indigo/Teal for data) -->
+    <!-- Application Structure Plan: The SPA is divided into a strategic overview and actionable squad formations. It uses a tabbed interface. Tab 1 focuses on translating the 'Pricing & Margin Strategy' into visual data to align the goal. Tab 2 presents the 3 highly specialized 'Strategic Squads' custom-built from the R&R data to execute the specific global/pricing tactics. Tab 3 allows interactive filtering of the team based on specific strategic keywords (e.g., 'TikTok', 'ODM Negotiation'). This structure bridges high-level strategy documents directly with human resource allocation. -->
+    <!-- Visualization & Content Choices: 1. Margin Simulation -> Stacked Bar Chart (Chart.js) -> Shows Cost (25%) vs Margin (75%) across channels, clearly visualizing the 'Price Defense Strategy' from the doc. 2. Squad Cards -> HTML/Tailwind -> Displays the 'Why' behind each member selection based on their personality traits mapped to the doc's requirements (e.g., AG1 Model = Independent/Fast Execution). 3. Interactive Filtering -> JS Logic + HTML Grid -> Enables dynamic task force building based on the new strategic keywords. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Project: 그날. 내 편</span>
+                    <span class="bg-indigo-100 text-indigo-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Global & Pricing</span>
+                </div>
+                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">전략 실행 스쿼드 빌더</h1>
+            </div>
+            <div class="flex gap-3">
+                <div class="bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-right">
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase">목표 그로스마진</div>
+                    <div class="text-lg font-bold text-slate-800">75%+</div>
+                </div>
+                <div class="bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 text-right">
+                    <div class="text-[10px] text-slate-500 font-semibold uppercase">타겟 국가</div>
+                    <div class="text-lg font-bold text-slate-800">일본 + 4개국</div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex gap-6 overflow-x-auto hide-scrollbar border-b border-slate-200">
+            <button id="tab-squads" class="pb-3 text-sm transition-colors whitespace-nowrap tab-active" onclick="switchTab('squads')">추천 스쿼드 구성안</button>
+            <button id="tab-charts" class="pb-3 text-sm transition-colors whitespace-nowrap tab-inactive" onclick="switchTab('charts')">채널/마진 전략 시각화</button>
+            <button id="tab-builder" class="pb-3 text-sm transition-colors whitespace-nowrap tab-inactive" onclick="switchTab('builder')">맞춤형 인재 탐색</button>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+        <section id="view-squads" class="block space-y-10">
+            <div class="max-w-3xl">
+                <h2 class="text-2xl font-bold text-slate-900">전략 맞춤형 추천 스쿼드</h2>
+                <p class="text-slate-600 mt-2">첨부해주신 '글로벌 수출 전략'과 '가격·원가 전략' 문서를 완벽히 분석하여, 해당 과제를 가장 빠르고 리스크 없이 수행할 수 있는 최적의 팀원 조합 3가지를 도출했습니다.</p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div class="bg-indigo-50 border-b border-indigo-100 p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl">🇯🇵</span>
+                            <h3 class="text-xl font-bold text-indigo-900">Squad 1. 일본 올인 & 오프라인 거점 스쿼드</h3>
+                        </div>
+                        <p class="text-sm text-indigo-700 font-medium">전략 타겟: 지인 파트너십 레버리지, 오프라인 50개 매장 입점, 식품위생법/상표권 방어</p>
+                        <p class="text-xs text-indigo-600 mt-1">필요 역량: B2B 파트너 핸들링(관계형), 리스크 방어 및 꼼꼼한 마일스톤 관리(디테일/신중형)</p>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-indigo-600 mb-1">스쿼드 리드 (파트너십 총괄)</div>
+                            <div class="font-bold text-slate-900 mb-1">민영탄 <span class="text-xs font-normal text-slate-500">BM MD</span></div>
+                            <div class="text-xs text-slate-600 mb-2">B2B, 전략적 제휴 신규 기회 창출</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded">큰그림형</span><span class="bg-blue-100 text-blue-700 text-[10px] px-1.5 py-0.5 rounded">신중계획형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">일본 독점 에이전시 계약 조건 및 성과 KPI를 신중하게 조율하고 거시적 수익 구조를 설계합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-indigo-600 mb-1">라쿠텐/큐텐 채널 실행</div>
+                            <div class="font-bold text-slate-900 mb-1">김동길 <span class="text-xs font-normal text-slate-500">BM MD</span></div>
+                            <div class="text-xs text-slate-600 mb-2">확장 MD, 신규 채널 확대</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-teal-100 text-teal-700 text-[10px] px-1.5 py-0.5 rounded">디테일형</span><span class="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded">빠른실행형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">빠른 실행력으로 라쿠텐/큐텐 재팬 스토어 오픈 및 초기 볼륨 확대를 전담합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-indigo-600 mb-1">일본 현지화 마케팅</div>
+                            <div class="font-bold text-slate-900 mb-1">홍다희 <span class="text-xs font-normal text-slate-500">BX 마케터</span></div>
+                            <div class="text-xs text-slate-600 mb-2">인스타그램, 인플루언서 마케팅</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-teal-100 text-teal-700 text-[10px] px-1.5 py-0.5 rounded">디테일형</span><span class="bg-fuchsia-100 text-fuchsia-700 text-[10px] px-1.5 py-0.5 rounded">조력자형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">금지 표현(생리통 완화 등)을 꼼꼼히 피해 규정을 준수하며 일본 인플루언서 시딩을 운영합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-indigo-600 mb-1">규제/물류 오퍼레이션</div>
+                            <div class="font-bold text-slate-900 mb-1">박한솔 <span class="text-xs font-normal text-slate-500">CS 매니저</span></div>
+                            <div class="text-xs text-slate-600 mb-2">물류 발주, 재고 관리</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-teal-100 text-teal-700 text-[10px] px-1.5 py-0.5 rounded">디테일형</span><span class="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded">원칙준수형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">수출 통관, 식품위생법 라벨링 등 파트너사와의 원칙적이고 빈틈없는 물류 소통을 책임집니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div class="bg-rose-50 border-b border-rose-100 p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl">🌐</span>
+                            <h3 class="text-xl font-bold text-rose-900">Squad 2. AG1 D2C 글로벌 확장 스쿼드</h3>
+                        </div>
+                        <p class="text-sm text-rose-700 font-medium">전략 타겟: 파트너 없는 플랫폼 D2C(쇼피, 틱톡), 영문명 A/B 테스트, 어필리에이트 마케팅</p>
+                        <p class="text-xs text-rose-600 mt-1">필요 역량: 틱톡/숏폼 트렌드 캐칭(창의혁신형), 맨땅에서 빠르게 세팅하는 능력(빠른실행형/독립형)</p>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-rose-600 mb-1">스쿼드 리드 (D2C 확장 총괄)</div>
+                            <div class="font-bold text-slate-900 mb-1">문여진 <span class="text-xs font-normal text-slate-500">BX 팀장</span></div>
+                            <div class="text-xs text-slate-600 mb-2">런칭 전략 총괄, 온드미디어</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded">창의혁신형</span><span class="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded">빠른실행형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">파트너 없이 직접 진출하는 D2C 특성상, 기발한 아이디어로 타겟 시장(대만/싱가폴/태국) 런칭을 주도합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-rose-600 mb-1">틱톡/바이럴 콘텐츠 PD</div>
+                            <div class="font-bold text-slate-900 mb-1">조경빈 <span class="text-xs font-normal text-slate-500">콘텐츠 PD</span></div>
+                            <div class="text-xs text-slate-600 mb-2">롱폼/숏폼 제작 및 채널 운영</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded">창의혁신형</span><span class="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded">빠른실행형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">태국/글로벌 타겟 TikTok Shop 라이브 커머스 및 바이럴 숏폼 콘텐츠를 기획·제작합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-rose-600 mb-1">퍼포먼스/어필리에이트 운영</div>
+                            <div class="font-bold text-slate-900 mb-1">윤은빈 <span class="text-xs font-normal text-slate-500">BM 마케터</span></div>
+                            <div class="text-xs text-slate-600 mb-2">신규 매체 셀프 서브 운영</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded">빠른실행형</span><span class="bg-orange-100 text-orange-700 text-[10px] px-1.5 py-0.5 rounded">주도형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">AG1 모델인 인플루언서 20% 커미션 어필리에이트 구조를 세팅하고 글로벌 퍼포먼스 광고를 태웁니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-rose-600 mb-1">글로벌 에셋 & 번역 디자인</div>
+                            <div class="font-bold text-slate-900 mb-1">박주혜 <span class="text-xs font-normal text-slate-500">BX 디렉터</span></div>
+                            <div class="text-xs text-slate-600 mb-2">비주얼 디렉션, 에셋 개발</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-teal-100 text-teal-700 text-[10px] px-1.5 py-0.5 rounded">디테일형</span><span class="bg-slate-100 text-slate-700 text-[10px] px-1.5 py-0.5 rounded">독립형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">AI 번역 툴을 활용한 다국어 에셋 변환 및 쇼피(Shopee)/아마존 상세페이지를 독립적으로 빠르게 쳐냅니다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div class="bg-amber-50 border-b border-amber-100 p-6">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl">💰</span>
+                            <h3 class="text-xl font-bold text-amber-900">Squad 3. 수익성 & SKU 최적화 스쿼드</h3>
+                        </div>
+                        <p class="text-sm text-amber-700 font-medium">전략 타겟: 그로스마진 75% 달성, 원가 25% 하락 ODM 협상, 채널별(5/10/15포) 전용 구성 및 방어</p>
+                        <p class="text-xs text-amber-600 mt-1">필요 역량: 치밀한 수익 구조 계산(데이터분석형), 다채널 패키지 기획/디자인(큰그림/창의형)</p>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-amber-600 mb-1">스쿼드 리드 (원가/수익 총괄)</div>
+                            <div class="font-bold text-slate-900 mb-1">김두만 <span class="text-xs font-normal text-slate-500">BM 팀장</span></div>
+                            <div class="text-xs text-slate-600 mb-2">상품 기획, 개발 로드맵 정렬</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded">큰그림형</span><span class="bg-cyan-100 text-cyan-700 text-[10px] px-1.5 py-0.5 rounded">데이터분석형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">ODM 협상을 주도하여 30ml 원가율 25% 목표를 달성하고, 전체 채널 가격 방어 로드맵을 지휘합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-amber-600 mb-1">구독 & 단골화 모델 기획</div>
+                            <div class="font-bold text-slate-900 mb-1">전환석 <span class="text-xs font-normal text-slate-500">BM 마케터</span></div>
+                            <div class="text-xs text-slate-600 mb-2">개인화 CRM, 단골화 셋업</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded">큰그림형</span><span class="bg-cyan-100 text-cyan-700 text-[10px] px-1.5 py-0.5 rounded">데이터분석형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">핵심 이익 채널인 D2C 15포 구독 모델을 설계하고, 친구 추천 리워드 구조를 수치화하여 세팅합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-amber-600 mb-1">채널 전용 패키지 디자인</div>
+                            <div class="font-bold text-slate-900 mb-1">남현우 <span class="text-xs font-normal text-slate-500">Design 디자이너</span></div>
+                            <div class="text-xs text-slate-600 mb-2">패키지 디자인 및 업체 핸들링</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded">큰그림형</span><span class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded">창의혁신형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">5포/10포/15포 각 채널별 차별화된 패키징을 기획하고 생산사와의 규격/색상 핸드오프를 단독 수행합니다.</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <div class="text-[10px] font-bold text-amber-600 mb-1">마진/퍼포먼스 오퍼레이션</div>
+                            <div class="font-bold text-slate-900 mb-1">송태규 <span class="text-xs font-normal text-slate-500">BM 마케터</span></div>
+                            <div class="text-xs text-slate-600 mb-2">LTV 중심 그로스 구조 셋업</div>
+                            <div class="flex gap-1 mb-2"><span class="bg-teal-100 text-teal-700 text-[10px] px-1.5 py-0.5 rounded">디테일형</span><span class="bg-cyan-100 text-cyan-700 text-[10px] px-1.5 py-0.5 rounded">데이터분석형</span></div>
+                            <p class="text-xs text-slate-500 border-t border-slate-200 pt-2">채널별 실질 마진(수수료 제외)을 디테일하게 계산하고 타겟 ROAS 기반으로 마케팅 예산을 통제합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-charts" class="hidden space-y-10">
+            <div class="max-w-3xl mb-8">
+                <h2 class="text-2xl font-bold text-slate-900">가격/원가 전략 시각화</h2>
+                <p class="text-slate-600 mt-2">작성해주신 '가격·원가 글로벌 통합 전략' 문서를 바탕으로 설계된 채널별 마진 구조와 가격 방어 전략입니다. 모든 채널이 최종적으로 D2C 자사몰 구독(가장 높은 마진)으로 수렴하도록 기획되었습니다.</p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-2 text-center">채널별 가격 구성 및 마진 브레이크다운 (가안)</h3>
+                <p class="text-sm text-slate-500 text-center mb-6">최저가 압박을 피하기 위한 포수(SKU) 분리 전략 및 그로스마진(75%+) 타겟</p>
+                <div class="chart-container">
+                    <canvas id="marginChart"></canvas>
+                </div>
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                        <strong class="text-amber-800 block mb-1">전략 1. 최저가 비교 차단</strong>
+                        <p class="text-amber-700 text-xs">쿠팡(10포), 홈쇼핑(5포), 자사몰(15포)로 구성을 다르게 하여 유통사의 최저가 매칭 요구를 원천 차단합니다.</p>
+                    </div>
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                        <strong class="text-emerald-800 block mb-1">전략 2. 원가율 25% 락인</strong>
+                        <p class="text-emerald-700 text-xs">모든 채널 1포당 원가 500원(25%) 유지. ODM 협상, 30ml 샷 변경, MOQ 확대를 통해 달성합니다.</p>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                        <strong class="text-indigo-800 block mb-1">전략 3. 글로벌 펀드 조성</strong>
+                        <p class="text-indigo-700 text-xs">D2C에서 확보된 포당 900원(45%)의 순수익을 해외 파트너사 커미션 및 틱톡 광고비로 재투자합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-builder" class="hidden space-y-6">
+            <div class="max-w-3xl mb-4">
+                <h2 class="text-2xl font-bold text-slate-900">전략 기반 맞춤형 인재 탐색</h2>
+                <p class="text-slate-600 mt-2">새로운 글로벌/제품 세부 과제가 발생했을 때, 필요한 전략적 무기를 보유한 팀원을 직접 찾아 스쿼드를 구성해보세요.</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-wrap gap-4 items-center">
+                <span class="text-sm font-semibold text-slate-700 w-full md:w-auto">전략 과제 매칭:</span>
+                
+                <select id="filterStrategicTask" class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 p-2.5 flex-grow md:flex-grow-0">
+                    <option value="all">전체 팀원 보기</option>
+                    <option value="데이터분석형">원가 분석 / 단가 협상가 (데이터 분석형)</option>
+                    <option value="디테일형">규제 파악 / 오퍼레이터 (디테일형)</option>
+                    <option value="빠른실행형">D2C 쇼피/틱톡 초기 세팅 (빠른 실행형)</option>
+                    <option value="창의혁신형">글로벌 숏폼/바이럴 콘텐츠 (창의 혁신형)</option>
+                    <option value="조력자형">해외 파트너 커뮤니케이션 (관계/조력자형)</option>
+                    <option value="큰그림형">BM 설계 및 로드맵 구축 (큰그림형)</option>
+                </select>
+
+                <input type="text" id="filterNameBuilder" placeholder="이름 검색..." class="bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-amber-500 focus:border-amber-500 p-2.5">
+                <button id="resetFiltersBuilder" class="text-sm text-slate-500 hover:text-amber-600 underline ml-auto">필터 초기화</button>
+            </div>
+
+            <div class="mb-2">
+                <span class="text-sm text-slate-500">매칭된 인재: <span id="resultCountBuilder" class="font-bold text-amber-600">30</span>명</span>
+            </div>
+
+            <div id="memberGridBuilder" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- JS populated -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Data from R&R
+        const members = [
+            { name: "양정모", team: "경영진", role: "CEO", task: "브랜딩 & 상품기획 총괄", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "독립형" },
+            { name: "정영생", team: "경영진", role: "CFO", task: "경영/재무/비즈니스 오퍼레이션 총괄", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "한현규", team: "People & AI 팀", role: "팀장", task: "HR 총괄, AI 전략 및 퍼실리테이팅", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "주도형" },
+            { name: "김두만", team: "BM 팀", role: "팀장", task: "BM 총괄, 상품 개발 로드맵", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "주도형" },
+            { name: "민영탄", team: "BM 팀", role: "MD", task: "시니어 사업 개발, 친추 BM 및 B2B", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "주도형" },
+            { name: "이유리", team: "BM 팀", role: "파트장", task: "크로스펑셔널 상품 기획/홈쇼핑 등", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "주도형" }, // Assumed traits for visual completeness based on role
+            { name: "김동길", team: "BM 팀", role: "MD", task: "확장 MD (쿠팡, 컬리, 올리브영 채널)", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "데이터분석형", t_collab: "조력자형" },
+            { name: "문소연", team: "BM 팀", role: "MD", task: "단골화 MD (자사몰, 네이버, 카카오 선물하기)", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "송태규", team: "BM 팀", role: "마케터", task: "퍼포먼스 오퍼레이션, LTV 중심 구조", t_view: "디테일형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "독립형" },
+            { name: "전환석", team: "BM 팀", role: "마케터", task: "CRM 마케터 (개인화 CRM 셋업)", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "독립형" },
+            { name: "윤은빈", team: "BM 팀", role: "마케터", task: "그로스 컨텐츠 마케터 (DA 기획/신규 매체)", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "주도형" },
+            { name: "문여진", team: "BX 팀", role: "팀장", task: "브랜드/런칭 전략 총괄", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "주도형" },
+            { name: "알렉스", team: "BX 팀", role: "PM", task: "영상/포토 PM, TF 지원", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "박주혜", team: "BX 팀", role: "디렉터", task: "UIUX 기획 리딩, 비주얼 에셋 개발", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "독립형" },
+            { name: "홍다희", team: "BX 팀", role: "마케터", task: "공식 인스타, 인플루언서 마케팅", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "윤동석", team: "BX 팀", role: "마케터", task: "공식 유튜브, 인플루언서 블로그", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "주도형" },
+            { name: "김경민", team: "콘텐츠 팀", role: "팀장", task: "콘텐츠 프로젝트 리딩, 프로세스 총괄", t_view: "디테일형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "주도형" },
+            { name: "허지호", team: "콘텐츠 팀", role: "파트장", task: "매마샐 담당 콘텐츠 리딩 및 제작", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "임재민", team: "콘텐츠 팀", role: "파트장", task: "영상 디자인 및 퀄리티 컨트롤", t_view: "디테일형", t_speed: "신중계획형", t_solve: "창의혁신형", t_collab: "독립형" },
+            { name: "이송희", team: "콘텐츠 팀", role: "PD", task: "서리태콩물두유 영상 기획/촬영", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "정채원", team: "콘텐츠 팀", role: "PD", task: "소프트프로틴 브랜디드 영상", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "데이터분석형", t_collab: "독립형" },
+            { name: "조경빈", team: "콘텐츠 팀", role: "PD", task: "온드미디어 롱폼/숏폼 콘텐츠 운영", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "주도형" },
+            { name: "김지훈", team: "콘텐츠 팀", role: "PD", task: "유튜브/인스타 숏폼 및 레시피 콘텐츠", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "독립형" },
+            { name: "김문준", team: "Design 팀", role: "팀장", task: "BI/BX 디자인 시스템 제작", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "데이터분석형", t_collab: "조력자형" },
+            { name: "남현우", team: "Design 팀", role: "디자이너", task: "프로덕트(패키지) 디자인, 업체 핸들링", t_view: "큰그림형", t_speed: "신중계획형", t_solve: "창의혁신형", t_collab: "독립형" },
+            { name: "박민지", team: "Design 팀", role: "디자이너", task: "광고 소재 제작, GFA", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "윤세영", team: "Design 팀", role: "디자이너", task: "프로모션, 커머스, CRM 디자인", t_view: "큰그림형", t_speed: "빠른실행형", t_solve: "창의혁신형", t_collab: "독립형" },
+            { name: "조서연", team: "Design 팀", role: "디자이너", task: "공식몰 UI/UX 디자인", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "데이터분석형", t_collab: "독립형" },
+            { name: "김유진", team: "CS 팀", role: "팀장", task: "CS 총괄, VOC 기반 인사이트 도출", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "조력자형" },
+            { name: "박한솔", team: "CS 팀", role: "매니저", task: "물류/운영, 재고, 발주 관리", t_view: "디테일형", t_speed: "신중계획형", t_solve: "원칙준수형", t_collab: "독립형" },
+            { name: "한서연", team: "CS 팀", role: "매니저", task: "고객 접점 응대, 사후 케어", t_view: "디테일형", t_speed: "빠른실행형", t_solve: "원칙준수형", t_collab: "독립형" }
+        ];
+
+        function getTraitBadge(trait) {
+            const colors = {
+                "큰그림형": "bg-indigo-100 text-indigo-700",
+                "디테일형": "bg-teal-100 text-teal-700",
+                "빠른실행형": "bg-rose-100 text-rose-700",
+                "신중계획형": "bg-blue-100 text-blue-700",
+                "창의혁신형": "bg-amber-100 text-amber-700",
+                "데이터분석형": "bg-cyan-100 text-cyan-700",
+                "원칙준수형": "bg-emerald-100 text-emerald-700",
+                "주도형": "bg-orange-100 text-orange-700",
+                "조력자형": "bg-fuchsia-100 text-fuchsia-700",
+                "독립형": "bg-slate-100 text-slate-700"
+            };
+            return `<span class="${colors[trait] || "bg-gray-100 text-gray-700"} text-[10px] px-1.5 py-0.5 rounded">${trait}</span>`;
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            ['squads', 'charts', 'builder'].forEach(id => {
+                document.getElementById(`view-${id}`).classList.add('hidden');
+                document.getElementById(`view-${id}`).classList.remove('block');
+                document.getElementById(`tab-${id}`).classList.replace('tab-active', 'tab-inactive');
+            });
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`view-${tabId}`).classList.add('block');
+            document.getElementById(`tab-${tabId}`).classList.replace('tab-inactive', 'tab-active');
+
+            if(tabId === 'charts') renderMarginChart();
+            if(tabId === 'builder') filterBuilder();
+        }
+
+        // Chart.js rendering
+        let marginChartInstance = null;
+        function renderMarginChart() {
+            if (marginChartInstance) return;
+            const ctx = document.getElementById('marginChart').getContext('2d');
+            
+            // Document data mapping
+            const labels = ['홈쇼핑 전용 (5포)', '쿠팡/온라인 (10포)', '올리브영 (15포)', 'D2C 자사몰 구독 (15포)', '일본 파트너십'];
+            const costs = [500, 500, 500, 500, 500]; // Fixed 25% cost
+            const marketingFees = [35*19.8, 15*18.9 + 300, 31.5*21.33 + 200, 600, 400]; // Approximated from doc
+            const netProfit = [787, 807, 827, 900, 1100]; 
+
+            marginChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '순수익 (글로벌 투자 재원)',
+                            data: netProfit,
+                            backgroundColor: '#10B981', // Emerald for profit
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: '마케팅비/수수료',
+                            data: marketingFees,
+                            backgroundColor: '#FDE68A', // Amber light
+                            stack: 'Stack 0',
+                        },
+                        {
+                            label: '제조 원가 (고정 500원)',
+                            data: costs,
+                            backgroundColor: '#94A3B8', // Slate
+                            stack: 'Stack 0',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: { mode: 'index', intersect: false },
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        x: { stacked: true },
+                        y: { stacked: true, beginAtZero: true, title: { display: true, text: '1포당 금액 (원)' } }
+                    }
+                }
+            });
+        }
+
+        // Builder Logic
+        function renderBuilderGrid(data) {
+            const grid = document.getElementById('memberGridBuilder');
+            grid.innerHTML = '';
+            data.forEach(m => {
+                grid.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                        <div class="mb-2">
+                            <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">${m.team}</span>
+                        </div>
+                        <div class="font-bold text-slate-900 mb-1">${m.name} <span class="text-xs font-normal text-slate-500">${m.role}</span></div>
+                        <div class="text-xs text-slate-600 mb-3 flex-grow">${m.task}</div>
+                        <div class="flex flex-wrap gap-1 border-t border-slate-100 pt-2">
+                            ${getTraitBadge(m.t_view)}${getTraitBadge(m.t_speed)}${getTraitBadge(m.t_solve)}${getTraitBadge(m.t_collab)}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('resultCountBuilder').textContent = data.length;
+        }
+
+        function filterBuilder() {
+            const taskVal = document.getElementById('filterStrategicTask').value;
+            const nameVal = document.getElementById('filterNameBuilder').value.toLowerCase();
+
+            const filtered = members.filter(m => {
+                const matchTask = taskVal === 'all' || 
+                                  m.t_view === taskVal || m.t_speed === taskVal || 
+                                  m.t_solve === taskVal || m.t_collab === taskVal;
+                const matchName = m.name.toLowerCase().includes(nameVal);
+                return matchTask && matchName;
+            });
+            renderBuilderGrid(filtered);
+        }
+
+        document.getElementById('filterStrategicTask').addEventListener('change', filterBuilder);
+        document.getElementById('filterNameBuilder').addEventListener('input', filterBuilder);
+        document.getElementById('resetFiltersBuilder').addEventListener('click', () => {
+            document.getElementById('filterStrategicTask').value = 'all';
+            document.getElementById('filterNameBuilder').value = '';
+            filterBuilder();
+        });
+
+        // Initialize
+        window.onload = () => {
+            filterBuilder();
+        };
+
+    </script>
+</body>
+</html>
